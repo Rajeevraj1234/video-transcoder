@@ -1,2 +1,1 @@
-# video-transcoder
-Does the transcoding of video and add subtitle using AI 
+this is a video transcoding webApp
