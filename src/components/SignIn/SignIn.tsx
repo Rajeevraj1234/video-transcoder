@@ -16,9 +16,16 @@ export default function SignIn() {
           </form>
         </div>
       ) : (
-        <form action={Signin_action}>
-          <Button type="submit">Signin with Google</Button>
-        </form>
+        <div className="h-[100vh] w-full flex flex-col justify-center items-center">
+          <div className="border p-5 flex h-[20%] flex-col justify-center items-center rounded-md">
+            <div className="text-[2rem] font-bold mb-5">Login to video transcoder</div>
+            <form action={Signin_action}>
+              <Button variant={"outline"} size={"lg"} type="submit">
+                Signin with Google{" "}
+              </Button>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -14,5 +14,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       return true;
     },
+    async redirect({ url, baseUrl }) {
+        // Redirect to landing page after sign-in
+        return baseUrl; // Redirect to base URL
+      },
   },
 });
