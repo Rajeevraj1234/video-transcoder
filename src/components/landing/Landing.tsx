@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ModeToggle } from "../ModeToggle/ModeToggle";
@@ -7,6 +7,7 @@ import { useState } from "react";
 const Landing = () => {
   const [file, setFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [transcoded_urls, setTranscoded_urls] = useState<string[] | null>(null);
 
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
@@ -27,6 +28,9 @@ const Landing = () => {
 
       if (res.ok) {
         const data = await res.json();
+        const allUrls: string[] = Object.values(data.urls);
+        setTranscoded_urls(allUrls);
+
         console.log("successfull", data);
       } else {
         const errorData = await res.json();
@@ -58,13 +62,15 @@ const Landing = () => {
       <div>
         <ModeToggle />
       </div>
-      <a
-        href="https://leetcode.com/problems/longest-consecutive-sequence/solution/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        <div>go to questions</div>
-      </a>
+      <div>
+        {transcoded_urls?.map((url) => {
+          return (
+            <div>
+              <a href="url">{url}</a>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
