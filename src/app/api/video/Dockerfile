@@ -16,7 +16,7 @@ RUN apk update && apk add --no-cache \
 
 RUN pip3 install moviepy 
 
-RUN pip3 install triton==3.0.0 torch==2.3.1
+RUN pip3 install triton==3.0.0 torch==2.3.1 
 
 RUN pip3 install openai-whisper
 
