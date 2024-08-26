@@ -22,7 +22,7 @@ aws s3 cp output_360p.mp4 s3://$AWS_S3_BUCKET_NAME/$OUTPUT_KEY_360P
 aws s3 cp output_480p.mp4 s3://$AWS_S3_BUCKET_NAME/$OUTPUT_KEY_480P
 aws s3 cp output_720p.mp4 s3://$AWS_S3_BUCKET_NAME/$OUTPUT_KEY_720P
 
-sleep 150
+sleep 3000
 
 # Clean up
 rm input.mp4 output_360p.mp4 output_480p.mp4 output_720p.mp4 audio.wav subtitles.srt input_with_subtitle.mp4

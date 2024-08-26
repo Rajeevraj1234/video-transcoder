@@ -1,29 +1,30 @@
-FROM jrottenberg/ffmpeg:4.3-alpine
+# Use a Python 3.10 base image
+FROM python:3.10
 
-# Install dependencies
-RUN apk update && apk add --no-cache \
-    python3 \
-    py3-pip \
-    bash \
-    python3-dev \
-    musl-dev \
-    gcc \
-    g++ \
+# Install system dependencies including ffmpeg
+RUN apt-get update && apt-get install -y \
+    build-essential \
     libffi-dev \
-    openblas-dev \
-    && pip install --upgrade pip \
-    && pip3 install awscli
+    zlib1g-dev \
+    libblas-dev \
+    liblapack-dev \
+    python3-dev \
+    ffmpeg \
+    git \
+    && apt-get clean
 
-RUN pip3 install moviepy 
+# Upgrade pip and install Python packages
+RUN pip install --upgrade pip 
+RUN pip install torch==2.3.1 
+RUN pip install moviepy
 
-RUN pip3 install triton==3.0.0 torch==2.3.1 
+RUN pip install git+https://github.com/openai/whisper.git 
 
-RUN pip3 install openai-whisper
 
 # Set working directory
 WORKDIR /app
 
-# Copy the transcode script into the container
+# Copy scripts into the container
 COPY transcoding_shell.sh /app/transcoding_shell.sh
 COPY audio_to_srt.py /app/audio_to_srt.py
 COPY video_to_audio.py /app/video_to_audio.py
