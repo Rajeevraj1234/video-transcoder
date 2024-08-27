@@ -69,7 +69,7 @@ export async function POST(request: any) {
     const outputKey480p = `${fileKey.split(".")[0]}_480p.mp4`;
     const outputKey720p = `${fileKey.split(".")[0]}_720p.mp4`;
 
-    const dockerCmd = `sudo docker run --rm -e INPUT_URL=${inputUrl} -e OUTPUT_KEY_360P=${outputKey360p} -e OUTPUT_KEY_480P=${outputKey480p} -e OUTPUT_KEY_720P=${outputKey720p} -e AWS_S3_BUCKET_NAME=${process.env.AWS_S3_BUCKET_NAME} -e AWS_ACCESS_KEY_ID=${process.env.AWS_S3_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${process.env.AWS_S3_SECRET_ACCESS_KEY} transcoding-docker`;
+    const dockerCmd = `sudo docker run --rm -e INPUT_URL=${inputUrl} -e OUTPUT_KEY_360P=${outputKey360p} -e OUTPUT_KEY_480P=${outputKey480p} -e OUTPUT_KEY_720P=${outputKey720p} -e AWS_S3_BUCKET_NAME=${process.env.AWS_S3_BUCKET_NAME} -e AWS_ACCESS_KEY_ID=${process.env.AWS_S3_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${process.env.AWS_S3_SECRET_ACCESS_KEY} transcoding-docker-file`;
 
     console.log("Docker container started ==================> ");
 

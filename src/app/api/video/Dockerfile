@@ -41,3 +41,6 @@ COPY embeed_subtitle_into_video.py /app/
 
 # Make the script executable
 RUN chmod +x /app/transcoding_shell.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/app/transcoding_shell.sh"]
