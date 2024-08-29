@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
-import { exec, spawn } from "child_process";
-
+import { spawn } from "child_process";
+import { prisma } from "@/lib/db/index";
 const s3Client = new S3Client({
   //creating the s3 client to upload the video
   region: process.env.AWS_S3_REGION,
@@ -13,7 +13,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(
   file: Buffer,
-  fileName: string
+  fileName: string,
 ): Promise<{ url: string; fileKey: string }> {
   const fileBuffer = file;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -60,7 +60,7 @@ export async function POST(request: any) {
     if (!fileKey) {
       return NextResponse.json(
         { error: "fail to get the fileKey internal error." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
