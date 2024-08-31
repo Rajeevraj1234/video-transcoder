@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
-import { spawn } from "child_process"; 
+import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
 const s3Client = new S3Client({
   //creating the s3 client to upload the video
@@ -56,7 +56,14 @@ export async function POST(request: any) {
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
 
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
-
+    const res = prisma.Video_metadata.create({
+      data: {
+        userID: "heheheh",
+        name: fileKey,
+        url: url,
+      },
+    });
+    console.log(res);
     if (!fileKey) {
       return NextResponse.json(
         { error: "fail to get the fileKey internal error." },
