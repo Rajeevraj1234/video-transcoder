@@ -1,7 +1,12 @@
+"use server";
+
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/lib/auth";
+
 const s3Client = new S3Client({
   //creating the s3 client to upload the video
   region: process.env.AWS_S3_REGION,
@@ -13,7 +18,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(
   file: Buffer,
-  fileName: string,
+  fileName: string
 ): Promise<{ url: string; fileKey: string }> {
   const fileBuffer = file;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -50,24 +55,28 @@ async function uploadFileToS3(
 
 export async function POST(request: any) {
   try {
+    const session = await getServerSession(authOptions);
+    console.log(session);
+    
     const formData = await request.formData();
     const file = formData.get("file"); //get the file form the form data
 
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
 
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
-    const res = prisma.Video_metadata.create({
+    const res = prisma.video_metadata.create({
       data: {
-        userID: "heheheh",
+        userId: "heheheh",
         name: fileKey,
         url: url,
+        createdAt: Date.now() + "",
       },
     });
     console.log(res);
     if (!fileKey) {
       return NextResponse.json(
         { error: "fail to get the fileKey internal error." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
