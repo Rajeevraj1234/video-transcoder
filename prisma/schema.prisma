@@ -90,7 +90,8 @@ model Transcoded_video_metadata {
   id             String         @id @default(cuid())
   videoId        String
   Video_metadata Video_metadata @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  name           String
-  url            String
+  url360         String?
+  url480         String?
+  url720         String?
   createdAt      DateTime
 }

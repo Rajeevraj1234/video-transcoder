@@ -4,7 +4,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
 const s3Client = new S3Client({
@@ -18,7 +18,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(
   file: Buffer,
-  fileName: string
+  fileName: string,
 ): Promise<{ url: string; fileKey: string }> {
   const fileBuffer = file;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -56,27 +56,34 @@ async function uploadFileToS3(
 export async function POST(request: any) {
   try {
     const session = await getServerSession(authOptions);
-    console.log(session);
-    
+    if (!session) {
+      return NextResponse.json(
+        { error: "user not authenticated !!" },
+        { status: 401 }, //401 is for unauthorization
+      );
+    }
     const formData = await request.formData();
     const file = formData.get("file"); //get the file form the form data
 
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
 
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
-    const res = prisma.video_metadata.create({
+
+    //upload the original video metadata to db
+    const res = await prisma.video_metadata.create({
       data: {
-        userId: "heheheh",
+        userId: session?.user.id,
         name: fileKey,
         url: url,
-        createdAt: Date.now() + "",
+        createdAt: new Date(),
       },
     });
-    console.log(res);
+    console.log("video metadata:", res);
+
     if (!fileKey) {
       return NextResponse.json(
         { error: "fail to get the fileKey internal error." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -94,7 +101,9 @@ export async function POST(request: any) {
       const process = spawn(dockerCmd, { shell: true });
 
       process.on("close", (code) => {
+        console.log("Code is:", code);
         if (code === 0) {
+          console.log("code is resolved");
           resolve();
         } else {
           reject(new Error(`Transcoding failed with code ${code}`));
@@ -105,19 +114,34 @@ export async function POST(request: any) {
     console.log("Docker container ended ===================> ");
 
     //docker url files
-    const originalUrl = url;
     const url360p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey360p}`;
     const url480p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey480p}`;
     const url720p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey720p}`;
 
-    return NextResponse.json({
-      success: true,
-      urls: {
-        url360p,
-        url480p,
-        url720p,
+    const transcoded_res = await prisma.transcoded_video_metadata.create({
+      data: {
+        videoId: res.id,
+        url360: url360p,
+        url480: url480p,
+        url720: url720p,
+        createdAt: new Date(),
       },
     });
+    if (transcoded_res) {
+      return NextResponse.json({
+        success: true,
+        urls: {
+          url360p,
+          url480p,
+          url720p,
+        },
+      });
+    } else {
+      return NextResponse.json({
+        success: false,
+        error: "trancoding failed due to some server error",
+      });
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: error }, { status: 500 });
