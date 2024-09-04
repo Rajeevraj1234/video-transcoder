@@ -3,7 +3,10 @@ import UploadVideo from "@/components/upload-video/uploadVideo";
 const transcode = () => {
   return (
     <div>
-      <UploadVideo uploadPath={"/api/video/transcode"} />
+      <UploadVideo
+        headerName={"Transcode the video here"}
+        uploadPath={"/api/video/transcode"}
+      />
     </div>
   );
 };

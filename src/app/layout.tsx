@@ -1,11 +1,7 @@
-"use client";
-
 import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/theme-provider/theme-provider";
-
+import { Providers } from "./providers";
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -21,17 +17,10 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SessionProvider>{children}</SessionProvider>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -4,7 +4,13 @@ import { Input } from "@/components/ui/input";
 import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
 import { useState } from "react";
 
-const UploadVideo = ({ uploadPath }: { uploadPath: string }) => {
+const UploadVideo = ({
+  uploadPath,
+  headerName,
+}: {
+  uploadPath: string;
+  headerName: string;
+}) => {
   const [file, setFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [transcoded_urls, setTranscoded_urls] = useState<string[] | null>(null);
@@ -44,9 +50,7 @@ const UploadVideo = ({ uploadPath }: { uploadPath: string }) => {
   };
   return (
     <div className="h-[100vh] w-[100vw] flex flex-col px-[300px] justify-center items-center">
-      <div className="text-[3rem] font-bold">
-        Welcome to the video Transcoder
-      </div>
+      <div className="text-[3rem] font-bold">{headerName} </div>
       <div className="flex  flex-col justify-center items-center my-10 ">
         <form
           className="flex flex-col justify-center items-center"
@@ -80,6 +84,9 @@ const UploadVideo = ({ uploadPath }: { uploadPath: string }) => {
             <p className="text-xs font-medium text-gray-400 mt-2">
               MP4, MKV are Allowed.
             </p>
+            <p className="text-xs text-red-400  font-bold mt-2">
+              Max size 300mb
+            </p>
           </label>{" "}
           <Button
             type="submit"
@@ -90,9 +97,6 @@ const UploadVideo = ({ uploadPath }: { uploadPath: string }) => {
             {uploading ? "Uploading..." : "Upload"}
           </Button>
         </form>
-      </div>
-      <div>
-        <ModeToggle />
       </div>
       <div>
         {transcoded_urls?.map((url, index) => {
