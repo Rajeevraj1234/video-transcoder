@@ -1,6 +1,8 @@
 "use client";
 import { ModeToggle } from "../ModeToggle/ModeToggle";
 import { useRouter } from "next/navigation"; //useRouter should be imported from next/navigation not form next/router
+import { Profile } from "@/components/profile/Profile";
+import { Button } from "../ui/button";
 const Navbar = () => {
   const router = useRouter();
   function handleClick(path: string) {
@@ -12,32 +14,43 @@ const Navbar = () => {
         <div className="text-[2.5rem] font-bold ">vT</div>
         <div>
           <div className="flex justify-center text-sm items-center gap-7">
-            <span onClick={() => handleClick("/")} className="cursor-pointer">
+            <Button
+              variant={"ghost"}
+              onClick={() => handleClick("/")}
+              className="cursor-pointer"
+            >
               Home
-            </span>
-            <span
+            </Button>
+            <Button
+              variant={"ghost"}
               onClick={() => handleClick("/collections")}
               className="cursor-pointer"
             >
               Collections
-            </span>
-            <span
+            </Button>
+            <Button
+              variant={"ghost"}
               onClick={() => handleClick("/video/transcode")}
               className="cursor-pointer"
             >
               Transcode
-            </span>
-            <span
+            </Button>
+            <Button
+              variant={"ghost"}
               onClick={() => handleClick("/video/subtitle")}
               className="cursor-pointer"
             >
               Subtitle
-            </span>
-            <span
+            </Button>
+            <Button
+              variant={"ghost"}
               onClick={() => handleClick("/video/transcode-subtitle")}
               className="cursor-pointer"
             >
               Transcode and Subtitle
+            </Button>
+            <span onClick={() => handleClick} className="cursor-pointer">
+              <Profile />
             </span>
             <span onClick={() => handleClick} className="cursor-pointer">
               <ModeToggle />

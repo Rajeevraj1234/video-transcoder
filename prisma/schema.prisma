@@ -8,18 +8,19 @@ generator client {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String           @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
+  id                        String                      @id @default(cuid())
+  name                      String?
+  email                     String                      @unique
+  emailVerified             DateTime?
+  image                     String?
+  accounts                  Account[]
+  sessions                  Session[]
   // Optional for WebAuthn support
-  Authenticator  Authenticator[]
-  Video_metadata Video_metadata[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  Authenticator             Authenticator[]
+  Transcoded_video_metadata Transcoded_video_metadata[]
+  Video_metadata            Video_metadata[]
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
 }
 
 model Account {
@@ -80,18 +81,30 @@ model Video_metadata {
   id                        String                      @id @default(cuid())
   userId                    String
   user                      User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name                      String
+  originalName              String
+  updatedName               String
   url                       String
+  videoType                 videoType
   createdAt                 DateTime
   Transcoded_video_metadata Transcoded_video_metadata[]
 }
 
 model Transcoded_video_metadata {
   id             String         @id @default(cuid())
+  userId         String
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   videoId        String
   Video_metadata Video_metadata @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  url360         String?
-  url480         String?
-  url720         String?
+  url360         String
+  url480         String
+  url720         String
+  videoType      videoType
   createdAt      DateTime
+}
+
+enum videoType {
+  NORMAL
+  TRANSCODED
+  SUBTITLED
+  TRANSCODED_AND_SUBTITLED
 }

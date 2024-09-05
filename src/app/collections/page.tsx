@@ -5,19 +5,20 @@ import { getServerSession } from "next-auth";
 
 const Page = async () => {
   const session = await getServerSession(authOptions);
-  let video;
-  let videoUpdated;
+  let videoData;
   if (session) {
-    video = await prisma.video_metadata.findMany({
+    videoData = await prisma.video_metadata.findMany({
       where: {
         userId: session.user.id,
       },
+      include: {
+        Transcoded_video_metadata: true,
+      },
     });
-    videoUpdated = await prisma.transcoded_video_metadata.findMany();
   }
   return (
     <div>
-      <Collections video={video} videoUpdated={videoUpdated} />
+      <Collections videoData={videoData} />
     </div>
   );
 };

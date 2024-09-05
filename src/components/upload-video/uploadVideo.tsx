@@ -1,9 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ModeToggle } from "@/components/ModeToggle/ModeToggle";
 import { useState } from "react";
-
+import { useToast } from "@/components/hooks/use-toast";
 const UploadVideo = ({
   uploadPath,
   headerName,
@@ -13,11 +11,16 @@ const UploadVideo = ({
 }) => {
   const [file, setFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
-  const [transcoded_urls, setTranscoded_urls] = useState<string[] | null>(null);
-
+  const { toast } = useToast();
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
   };
+  function handleToast(message: string, success: boolean) {
+    toast({
+      variant: success ? "default" : "destructive",
+      description: message,
+    });
+  }
 
   const handleUpload = async (e: any) => {
     e.preventDefault();
@@ -34,10 +37,7 @@ const UploadVideo = ({
 
       if (res.ok) {
         const data = await res.json();
-        const allUrls: string[] = Object.values(data.urls);
-        setTranscoded_urls(allUrls);
-
-        console.log("successfull", data);
+        handleToast(data.message, data.success);
       } else {
         const errorData = await res.json();
         console.error(errorData.message || "Upload failed");
@@ -49,7 +49,7 @@ const UploadVideo = ({
     }
   };
   return (
-    <div className="h-[100vh] w-[100vw] flex flex-col px-[300px] justify-center items-center">
+    <div className="h-[90vh] w-[99vw] flex flex-col px-[300px] justify-center items-center">
       <div className="text-[3rem] font-bold">{headerName} </div>
       <div className="flex  flex-col justify-center items-center my-10 ">
         <form
@@ -97,15 +97,6 @@ const UploadVideo = ({
             {uploading ? "Uploading..." : "Upload"}
           </Button>
         </form>
-      </div>
-      <div>
-        {transcoded_urls?.map((url, index) => {
-          return (
-            <div key={index}>
-              <a href="url">{url}</a>
-            </div>
-          );
-        })}
       </div>
     </div>
   );

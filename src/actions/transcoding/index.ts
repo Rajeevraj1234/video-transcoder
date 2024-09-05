@@ -1,10 +1,11 @@
-"use server";
-
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
 
 interface fileType {
+  arrayBuffer():
+    | WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>
+    | PromiseLike<WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>>;
   size: number;
   type: string;
   name: string;
@@ -65,13 +66,15 @@ export default async function TranscodeVideo(
     console.log(file);
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
-
+    const videoType = option === "SUB" ? "SUBTITLED" : "NORMAL";
     //upload the original video metadata to db
     const res = await prisma.video_metadata.create({
       data: {
         userId: userId,
-        name: fileKey,
+        originalName: file.name,
+        updatedName: fileKey,
         url: url,
+        videoType: videoType,
         createdAt: new Date(),
       },
     });
@@ -127,8 +130,11 @@ export default async function TranscodeVideo(
         data: {
           videoId: res.id,
           url360: url360p,
+          userId: userId,
           url480: url480p,
           url720: url720p,
+          videoType:
+            option === "TRANS" ? "TRANSCODED" : "TRANSCODED_AND_SUBTITLED",
           createdAt: new Date(),
         },
       });
