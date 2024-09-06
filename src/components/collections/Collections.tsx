@@ -18,7 +18,7 @@ function Collections({
       <div className="text-[2rem] font-bold tracking-tight mb-10">
         Your Collections
       </div>
-      {videoData.length > 0 ? (
+      {videoData ? (
         <>
           <Table>
             <TableHeader className="bg-secondary rounded-t-lg overflow-hidden">
