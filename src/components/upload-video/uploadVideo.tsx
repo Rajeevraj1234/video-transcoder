@@ -27,7 +27,6 @@ const UploadVideo = ({
 
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       const res = await fetch(uploadPath, {
         method: "POST",
@@ -36,6 +35,7 @@ const UploadVideo = ({
 
       if (res.ok) {
         const data = await res.json();
+        console.log(data);
         handleToast(data.message, data.success);
       } else {
         const errorData = await res.json();

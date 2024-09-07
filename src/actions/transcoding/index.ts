@@ -63,7 +63,6 @@ export default async function TranscodeVideo(
   userId: string,
 ) {
   try {
-    console.log(file);
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
     const videoType = option === "SUB" ? "SUBTITLED" : "NORMAL";
@@ -100,9 +99,7 @@ export default async function TranscodeVideo(
       const process = spawn(dockerCmd, { shell: true });
 
       process.on("close", (code) => {
-        console.log("Code is:", code);
         if (code === 0) {
-          console.log("code is resolved");
           resolve();
         } else {
           reject(new Error(`Transcoding failed with code ${code}`));
@@ -113,7 +110,6 @@ export default async function TranscodeVideo(
     console.log("Docker container ended ===================> ");
     let transcoded_res;
     let response;
-    console.log("options is:", option);
     if (option === "SUB") {
       const subtitledUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileKey}`;
       response = {
@@ -129,8 +125,8 @@ export default async function TranscodeVideo(
       transcoded_res = await prisma.transcoded_video_metadata.create({
         data: {
           videoId: res.id,
-          url360: url360p,
           userId: userId,
+          url360: url360p,
           url480: url480p,
           url720: url720p,
           videoType:

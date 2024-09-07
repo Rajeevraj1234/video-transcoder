@@ -19,9 +19,15 @@ export async function POST(request: any) {
     }
     const formData = await request.formData();
     const file = formData.get("file"); //get the file form the form data
+    if (file.size > 300000000) {
+      return NextResponse.json({
+        success: false,
+        message: "make sure your are signed up",
+        status: 401,
+      });
+    }
     const option = "SUB";
     const transcoded_res = await TranscodeVideo(file, option, session.user.id);
-    console.log(transcoded_res);
     if (transcoded_res.success) {
       return NextResponse.json({
         success: true,

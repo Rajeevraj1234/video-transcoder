@@ -13,6 +13,8 @@ function Collections({
 }: {
   videoData: any; // TODO: add type here
 }) {
+  console.log(videoData);
+  
   return (
     <div className="mx-[300px] mt-[100px]">
       <div className="text-[2rem] font-bold tracking-tight mb-10">
@@ -42,7 +44,7 @@ function Collections({
                       </a>
                     </TableCell>
                   </TableRow>
-                  {video.Transcoded_video_metadata.lenght > 0 && (
+                  {video.Transcoded_video_metadata.length > 0 && (
                     <TableRow className="">
                       <TableCell className="font-medium w-[]">
                         {video.originalName}

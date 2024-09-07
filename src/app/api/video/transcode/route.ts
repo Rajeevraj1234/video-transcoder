@@ -1,6 +1,5 @@
 "use server";
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -11,8 +10,11 @@ export async function POST(request: any) {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json(
-        { error: "user not authenticated !!" },
-        { status: 401 }, //401 is for unauthorization
+        {
+          success: false,
+          message: "make sure your are signed up",
+          status: 401,
+        }, //401 is for unauthorization
       );
     }
     const formData = await request.formData();
@@ -23,12 +25,14 @@ export async function POST(request: any) {
     if (transcoded_res.success) {
       return NextResponse.json({
         success: true,
-        urls: transcoded_res.urls,
+        message: "Process Executed successfully check collection",
+        status: 200,
       });
     } else {
       return NextResponse.json({
         success: false,
-        error: "trancoding failed due to some server error",
+        message: "trancoding failed due to some server error",
+        status: 500,
       });
     }
   } catch (error) {
