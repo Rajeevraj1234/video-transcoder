@@ -22,7 +22,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(
   file: Buffer,
-  fileName: string,
+  fileName: string
 ): Promise<{ url: string; fileKey: string }> {
   const fileBuffer = file;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -60,7 +60,7 @@ async function uploadFileToS3(
 export default async function TranscodeVideo(
   file: fileType,
   option: string,
-  userId: string,
+  userId: string
 ) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
@@ -94,15 +94,40 @@ export default async function TranscodeVideo(
 
     console.log("Docker container started ==================> ");
 
+    const timeout = 1200000; // 10 minutes (adjust as necessary)
+
     await new Promise<void>((resolve, reject) => {
-      //return the promsis till the video it transcoding and being uploaded to s3
       const process = spawn(dockerCmd, { shell: true });
 
+      let timedOut = false;
+      let stdoutData = "";
+      let stderrData = "";
+
+      const timer = setTimeout(() => {
+        timedOut = true;
+        process.kill();
+        reject(new Error("Transcoding process timed out"));
+      }, timeout);
+
+      process.stdout.on("data", (data) => {
+        stdoutData += data.toString(); //using this i get the output in chunks which is helpfull for longer process and the process.on("close") does not have to wait till everything is done which let to the error of no resolving the issue        console.log(`stdout: ${data}`);
+      });
+
+      process.stderr.on("data", (data) => {
+        stderrData += data.toString(); // Accumulate stderr data
+        console.error(`stderr: ${data}`);
+      });
+
       process.on("close", (code) => {
-        if (code === 0) {
-          resolve();
-        } else {
-          reject(new Error(`Transcoding failed with code ${code}`));
+        clearTimeout(timer);
+        if (!timedOut) {
+          console.log("code is:", code);
+          if (code === 0) {
+            resolve();
+          } else {
+            console.error("stderr output:", stderrData);
+            reject(new Error(`Transcoding failed with code ${code}`));
+          }
         }
       });
     });
