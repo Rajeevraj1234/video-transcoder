@@ -10,9 +10,9 @@ const Landing = () => {
       </h1>
       <p className="font-medium text-xs mb-4 w-[600px] italic text-gray-400 text-center">
         Transform your videos with ease! Convert any type of video file into any
-        resolution, from crisp 360p to stunning 4K. Add subtitles effortlessly
-        to make your content more accessible and engaging. Elevate your video
-        experience with our powerful and user-friendly tool.
+        resolution, from crisp 360p to stunning 1080p. Add subtitles
+        effortlessly to make your content more accessible and engaging. Elevate
+        your video experience with our powerful and user-friendly tool.
       </p>
       <Button
         onClick={() => {
