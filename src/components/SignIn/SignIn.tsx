@@ -1,10 +1,7 @@
 "use client";
-import { useSession } from "next-auth/react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export default function SignIn() {
-  const { data: session, status } = useSession();
-
   return (
     <div>
       <div className="h-[100vh] w-full flex flex-col justify-center items-center">
@@ -15,7 +12,7 @@ export default function SignIn() {
             type="submit"
             className="text-[1rem] py-3 border flex gap-3 rounded-lg border-primary px-8"
           >
-            Signin with Google{" "}
+            SignIn with Google{" "}
             <span className="ml-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
