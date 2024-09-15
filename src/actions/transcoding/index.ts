@@ -22,7 +22,7 @@ const s3Client = new S3Client({
 
 async function uploadFileToS3(
   file: Buffer,
-  fileName: string
+  fileName: string,
 ): Promise<{ url: string; fileKey: string }> {
   const fileBuffer = file;
   const fileExtension = fileName.split(".").pop()?.toLowerCase() || "";
@@ -52,7 +52,8 @@ async function uploadFileToS3(
   await s3Client.send(command); //this sends the request to s3 to save the file to s3
 
   // Construct the URL
-  const url = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileKey}`;
+
+  const url = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey}`;
 
   return { url, fileKey };
 }
@@ -60,7 +61,7 @@ async function uploadFileToS3(
 export default async function TranscodeVideo(
   file: fileType,
   option: string,
-  userId: string
+  userId: string,
 ) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
@@ -136,16 +137,16 @@ export default async function TranscodeVideo(
     let transcoded_res;
     let response;
     if (option === "SUB") {
-      const subtitledUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileKey}`;
+      const subtitledUrl = url;
       response = {
         success: true,
         urls: { subtitledUrl },
       };
     } else {
       //docker url files
-      const url360p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey360p}`;
-      const url480p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey480p}`;
-      const url720p = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${outputKey720p}`;
+      const url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey360p}`;
+      const url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey480p}`;
+      const url720p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey720p}`;
 
       transcoded_res = await prisma.transcoded_video_metadata.create({
         data: {
