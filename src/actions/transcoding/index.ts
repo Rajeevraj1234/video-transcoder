@@ -1,6 +1,10 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
+import { NextResponse } from "next/server";
+
+import RedisClient from "@/lib/redis/index";
+const client = RedisClient.getInstance();
 
 interface fileType {
   arrayBuffer():
@@ -85,96 +89,25 @@ export default async function TranscodeVideo(
         success: false,
       };
     }
+    const redisDataToBeSend = {
+      fileKey,
+      userId,
+      option,
+      videoId: res.id,
+    };
+    console.log("Redis data", redisDataToBeSend);
 
-    const inputUrl = `s3://${process.env.AWS_S3_BUCKET_NAME}/${fileKey}`; //s3 url for the downloading of the video
-    const outputKey360p = `${fileKey.split(".")[0]}_360p.mp4`;
-    const outputKey480p = `${fileKey.split(".")[0]}_480p.mp4`;
-    const outputKey720p = `${fileKey.split(".")[0]}_720p.mp4`;
+    // pushing data to redis
+    await client.lPush("transcodingData", JSON.stringify(redisDataToBeSend));
 
-    const dockerCmd = `sudo docker run --rm -e INPUT_URL=${inputUrl} -e OPTION=${option} -e FILE_KEY=${fileKey} -e OUTPUT_KEY_360P=${outputKey360p} -e OUTPUT_KEY_480P=${outputKey480p} -e OUTPUT_KEY_720P=${outputKey720p} -e AWS_S3_BUCKET_NAME=${process.env.AWS_S3_BUCKET_NAME} -e AWS_ACCESS_KEY_ID=${process.env.AWS_S3_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${process.env.AWS_S3_SECRET_ACCESS_KEY} transcoding-docker`;
-
-    console.log("Docker container started ==================> ");
-
-    const timeout = 1200000; // 10 minutes (adjust as necessary)
-
-    await new Promise<void>((resolve, reject) => {
-      const process = spawn(dockerCmd, { shell: true });
-
-      let timedOut = false;
-      let stdoutData = "";
-      let stderrData = "";
-
-      const timer = setTimeout(() => {
-        timedOut = true;
-        process.kill();
-        reject(new Error("Transcoding process timed out"));
-      }, timeout);
-
-      process.stdout.on("data", (data) => {
-        stdoutData += data.toString(); //using this i get the output in chunks which is helpfull for longer process and the process.on("close") does not have to wait till everything is done which let to the error of no resolving the issue        console.log(`stdout: ${data}`);
-      });
-
-      process.stderr.on("data", (data) => {
-        stderrData += data.toString(); // Accumulate stderr data
-        console.error(`stderr: ${data}`);
-      });
-
-      process.on("close", (code) => {
-        clearTimeout(timer);
-        if (!timedOut) {
-          console.log("code is:", code);
-          if (code === 0) {
-            resolve();
-          } else {
-            console.error("stderr output:", stderrData);
-            reject(new Error(`Transcoding failed with code ${code}`));
-          }
-        }
-      });
-    });
-
-    console.log("Docker container ended ===================> ");
-    let transcoded_res;
-    let response;
-    if (option === "SUB") {
-      const subtitledUrl = url;
-      response = {
+    if (res) {
+      return {
         success: true,
-        urls: { subtitledUrl },
+        url,
       };
-    } else {
-      //docker url files
-      const url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey360p}`;
-      const url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey480p}`;
-      const url720p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey720p}`;
-
-      transcoded_res = await prisma.transcoded_video_metadata.create({
-        data: {
-          videoId: res.id,
-          userId: userId,
-          url360: url360p,
-          url480: url480p,
-          url720: url720p,
-          videoType:
-            option === "TRANS" ? "TRANSCODED" : "TRANSCODED_AND_SUBTITLED",
-          createdAt: new Date(),
-        },
-      });
-      response = {
-        success: true,
-        urls: {
-          url360p,
-          url480p,
-          url720p,
-        },
-      };
-    }
-    if (response) {
-      return response;
     } else {
       return {
-        success: false,
-        error: "trancoding failed due to some server error",
+        success: true,
       };
     }
   } catch (error) {

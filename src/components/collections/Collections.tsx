@@ -14,7 +14,7 @@ function Collections({
   videoData: any; // TODO: add type here
 }) {
   console.log(videoData);
-  
+
   return (
     <div className="mx-[300px] mt-[100px]">
       <div className="text-[2rem] font-bold tracking-tight mb-10">

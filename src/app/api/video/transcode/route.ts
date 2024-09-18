@@ -25,7 +25,7 @@ export async function POST(request: any) {
     if (transcoded_res.success) {
       return NextResponse.json({
         success: true,
-        message: "Process Executed successfully check collection",
+        message: "Processing has started !!",
         status: 200,
       });
     } else {
