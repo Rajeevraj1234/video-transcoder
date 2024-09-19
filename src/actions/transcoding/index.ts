@@ -95,7 +95,6 @@ export default async function TranscodeVideo(
       option,
       videoId: res.id,
     };
-    console.log("Redis data", redisDataToBeSend);
 
     // pushing data to redis
     await client.lPush("transcodingData", JSON.stringify(redisDataToBeSend));

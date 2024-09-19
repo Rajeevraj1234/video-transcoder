@@ -35,7 +35,6 @@ const UploadVideo = ({
 
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
         handleToast(data.message, data.success);
       } else {
         const errorData = await res.json();
