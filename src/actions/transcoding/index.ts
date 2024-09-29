@@ -1,10 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { spawn } from "child_process";
 import { prisma } from "@/lib/db/index";
-import { NextResponse } from "next/server";
 
-import RedisClient from "@/lib/redis/index";
-const client = RedisClient.getInstance();
+import axios from "axios";
 
 interface fileType {
   arrayBuffer():
@@ -66,13 +63,14 @@ export default async function TranscodeVideo(
   file: fileType,
   option: string,
   userId: string,
+  resolutions: any,
 ) {
   try {
     const buffer = Buffer.from(await file.arrayBuffer()); //convert binart file to buffer so that it will be esay to upload and manupulate the video
     const { url, fileKey } = await uploadFileToS3(buffer, file.name); //return the url and fileKey:name of the file
     const videoType = option === "SUB" ? "SUBTITLED" : "NORMAL";
     //upload the original video metadata to db
-    const res = await prisma.video_metadata.create({
+    const videoUploadStatus = await prisma.video_metadata.create({
       data: {
         userId: userId,
         originalName: file.name,
@@ -82,6 +80,12 @@ export default async function TranscodeVideo(
         createdAt: new Date(),
       },
     });
+    if (!videoUploadStatus) {
+      return {
+        error: "video cannot be uploaded",
+        success: false,
+      };
+    }
 
     if (!fileKey) {
       return {
@@ -89,17 +93,26 @@ export default async function TranscodeVideo(
         success: false,
       };
     }
-    const redisDataToBeSend = {
+    const processingData = {
       fileKey,
       userId,
       option,
-      videoId: res.id,
+      videoId: videoUploadStatus.id,
+      resolutions: resolutions,
     };
+    console.log(
+      "processing data resolution type is ===============>",
+      processingData,
+    );
 
-    // pushing data to redis
-    await client.lPush("transcodingData", JSON.stringify(redisDataToBeSend));
+    // sendin data for processing to SQS-LAMBDA
 
-    if (res) {
+    const processingResponse = await axios.post(
+      `${process.env.VIDEO_PROCESSING_URL}`,
+      processingData,
+    );
+
+    if (processingResponse.data.message) {
       return {
         success: true,
         url,

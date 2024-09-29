@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/components/hooks/use-toast";
+import Checkbox from "@/components/checkbox/Checkbox";
 const UploadVideo = ({
   uploadPath,
   headerName,
@@ -11,6 +12,7 @@ const UploadVideo = ({
 }) => {
   const [file, setFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [selectedResolutions, setSelectedResolutions] = useState<string[]>([]);
   const { toast } = useToast();
   const handleFileChange = (e: any) => {
     setFile(e.target.files[0]);
@@ -21,12 +23,15 @@ const UploadVideo = ({
       description: message,
     });
   }
+  //handle the resolution radio button
+
   const handleUpload = async (e: any) => {
     e.preventDefault();
     setUploading(true);
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("resolutions", JSON.stringify(selectedResolutions));
     try {
       const res = await fetch(uploadPath, {
         method: "POST",
@@ -46,6 +51,7 @@ const UploadVideo = ({
       setUploading(false);
     }
   };
+  console.log(selectedResolutions);
   return (
     <div className="h-[90vh] w-[99vw] flex flex-col px-[300px] justify-center items-center">
       <div className="text-[3rem] font-bold">{headerName} </div>
@@ -85,7 +91,7 @@ const UploadVideo = ({
                   MP4, MKV are Allowed.
                 </p>
                 <p className="text-xs text-red-400  font-bold mt-2">
-                  Max size 300mb
+                  Max size 100mb
                 </p>
               </>
             ) : (
@@ -118,6 +124,41 @@ const UploadVideo = ({
               </>
             )}
           </label>{" "}
+          <div className=" w-full mt-5 ">
+            <h3 className="font-semibold text-lg mb-2 mt-5">
+              Select Resolutions:
+            </h3>
+            <div className="flex gap-10 ml-1 justify-start  items-center">
+              <div>
+                <Checkbox
+                  value={"360"}
+                  selectedResolutions={selectedResolutions}
+                  setSelectedResolutions={setSelectedResolutions}
+                />
+              </div>
+              <div>
+                <Checkbox
+                  value={"480"}
+                  selectedResolutions={selectedResolutions}
+                  setSelectedResolutions={setSelectedResolutions}
+                />
+              </div>
+              <div>
+                <Checkbox
+                  value={"720"}
+                  selectedResolutions={selectedResolutions}
+                  setSelectedResolutions={setSelectedResolutions}
+                />
+              </div>
+              <div>
+                <Checkbox
+                  value={"1080"}
+                  selectedResolutions={selectedResolutions}
+                  setSelectedResolutions={setSelectedResolutions}
+                />
+              </div>
+            </div>
+          </div>
           <Button
             type="submit"
             disabled={!file || uploading}

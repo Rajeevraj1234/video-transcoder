@@ -19,9 +19,17 @@ export function Profile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} className="">
-          <User className=" h-5 w-5" />
-        </Button>
+        {session.status === "authenticated" ? (
+          <div>
+            <Button variant={"ghost"} className="">
+              <User className=" h-5 w-5" />
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <Button>Signup</Button>
+          </div>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         {session.status !== "unauthenticated" ? (

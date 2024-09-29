@@ -35,20 +35,6 @@ const Navbar = () => {
             >
               Transcode
             </Button>
-            <Button
-              variant={"ghost"}
-              onClick={() => handleClick("/video/subtitle")}
-              className="cursor-pointer"
-            >
-              Subtitle
-            </Button>
-            <Button
-              variant={"ghost"}
-              onClick={() => handleClick("/video/transcode-subtitle")}
-              className="cursor-pointer"
-            >
-              Transcode and Subtitle
-            </Button>
             <span onClick={() => handleClick} className="cursor-pointer">
               <Profile />
             </span>
