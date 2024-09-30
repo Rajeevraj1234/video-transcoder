@@ -24,16 +24,9 @@ export async function POST(request: NextRequest) {
           url360: url360p,
           url480: url480p,
           url720: url720p,
-          url1080: url1080p,
-          videoType:
-            data.option === "TRANS" ? "TRANSCODED" : "TRANSCODED_AND_SUBTITLED",
+          url1080: url1080p ?? null, 
+          videoType:  data.option === "TRANS" ? "TRANSCODED" : "TRANSCODED_AND_SUBTITLED",
           createdAt: new Date(),
-          user: {
-            connect: { id: data.userId },
-          },
-          videoMetadata: {
-            connect: { id: data.videoId }, 
-          },
         },
       });
     }
