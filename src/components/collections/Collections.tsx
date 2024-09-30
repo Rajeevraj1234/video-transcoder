@@ -22,7 +22,7 @@ interface TranscodedVideoMetadataProp {
 }
 
 interface VideoDataProp {
-  transcodedVideoMetadata: TranscodedVideoMetadataProp[];
+  Transcoded_video_metadata: TranscodedVideoMetadataProp[];
   createdAt: Date;
   id: string;
   originalName: string;

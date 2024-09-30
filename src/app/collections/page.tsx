@@ -17,7 +17,7 @@ interface TranscodedVideoMetadataProp {
 }
 
 interface VideoDataProp {
-  transcodedVideoMetadata: TranscodedVideoMetadataProp[];
+  Transcoded_video_metadata: TranscodedVideoMetadataProp[];
   createdAt: Date;
   id: string;
   originalName: string;
@@ -39,9 +39,9 @@ const Page = async () => {
         userId: session.user.id,
       },
       include: {
-        transcodedVideoMetadata: true,
+        Transcoded_video_metadata: true,
       },
-    }) as VideoDataArray; // Add type assertion here
+    }) as VideoDataArray; 
   }
   
   
