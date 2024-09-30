@@ -5,7 +5,7 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, data, success } = await request.json();
+    const { data, success } = await request.json();
     if (success) {
       const outputKey360p = `${data.fileKey.split(".")[0]}_360p.mp4`;
       const outputKey480p = `${data.fileKey.split(".")[0]}_480p.mp4`;

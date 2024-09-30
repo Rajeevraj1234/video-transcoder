@@ -20,8 +20,10 @@ export async function POST(request: any) {
     const formData = await request.formData();
     const file = formData.get("file"); //get the file form the form data
     const option = "BOTH";
-    const transcoded_res = await TranscodeVideo(file, option, session.user.id);
-    console.log(transcoded_res);
+    //const transcoded_res = await TranscodeVideo(file, option, session.user.id);
+    const transcoded_res = {
+      success: true,
+    };
     if (transcoded_res.success) {
       return NextResponse.json({
         success: true,

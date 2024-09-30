@@ -9,20 +9,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface videoMetadataProp {
-  cratedAt: Date;
+interface TranscodedVideoMetadataProp {
+  createdAt: Date;
   id: string;
-  url360?: string;
-  url480?: string;
-  url720?: string;
-  url1080?: string;
+  url360: string | null;
+  url480: string | null;
+  url720: string | null;
+  url1080: string | null;
   userId: string;
   videoId: string;
   videoType: string;
 }
-interface videoDataProp {
-  Transcoder_video_metatdata: videoMetadataProp[];
-  cratedAt: Date;
+
+interface VideoDataProp {
+  transcodedVideoMetadata: TranscodedVideoMetadataProp[];
+  createdAt: Date;
   id: string;
   originalName: string;
   updatedName: string;
@@ -30,7 +31,12 @@ interface videoDataProp {
   userId: string;
   videoType: string;
 }
-function Collections({ videoData }: { videoData: videoDataProp[] }) {
+
+interface CollectionsProps {
+  videoData: VideoDataProp[];
+}
+
+const Collections: React.FC<CollectionsProps> = ({ videoData }) => {
   return (
     <div className="mx-[300px] mt-[100px]">
       <div className="text-[2rem] font-bold tracking-tight mb-10">
@@ -126,6 +132,6 @@ function Collections({ videoData }: { videoData: videoDataProp[] }) {
       )}
     </div>
   );
-}
+};
 
 export default Collections;
