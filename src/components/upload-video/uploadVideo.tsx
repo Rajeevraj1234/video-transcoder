@@ -3,19 +3,21 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useToast } from "@/components/hooks/use-toast";
 import Checkbox from "@/components/checkbox/Checkbox";
-const UploadVideo = ({
-  uploadPath,
-  headerName,
-}: {
+
+//upload prop goes here
+interface uploadVideoProp {
   uploadPath: string;
   headerName: string;
-}) => {
+}
+const UploadVideo = ({ uploadPath, headerName }: uploadVideoProp) => {
   const [file, setFile] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
   const [selectedResolutions, setSelectedResolutions] = useState<string[]>([]);
   const { toast } = useToast();
-  const handleFileChange = (e: any) => {
-    setFile(e.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
   };
   function handleToast(message: string, success: boolean) {
     toast({
@@ -23,7 +25,6 @@ const UploadVideo = ({
       description: message,
     });
   }
-  //handle the resolution radio button
 
   const handleUpload = async (e: any) => {
     e.preventDefault();
@@ -51,7 +52,6 @@ const UploadVideo = ({
       setUploading(false);
     }
   };
-  console.log(selectedResolutions);
   return (
     <div className="h-[90vh] w-[99vw] flex flex-col px-[300px] justify-center items-center">
       <div className="text-[3rem] font-bold">{headerName} </div>

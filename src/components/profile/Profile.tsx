@@ -18,6 +18,9 @@ export function Profile() {
   const router = useRouter();
   return (
     <DropdownMenu>
+      {session.status === "unauthenticated" && (
+        <Button onClick={() => router.push("/signin")}>Signup</Button>
+      )}
       <DropdownMenuTrigger asChild>
         {session.status === "authenticated" ? (
           <div>
@@ -25,11 +28,7 @@ export function Profile() {
               <User className=" h-5 w-5" />
             </Button>
           </div>
-        ) : (
-          <div>
-            <Button>Signup</Button>
-          </div>
-        )}
+        ) : null}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         {session.status !== "unauthenticated" ? (

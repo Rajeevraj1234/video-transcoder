@@ -98,6 +98,7 @@ model Transcoded_video_metadata {
   url360         String
   url480         String
   url720         String
+  url1080        String
   videoType      videoType
   createdAt      DateTime
 }

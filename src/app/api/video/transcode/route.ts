@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import TranscodeVideo from "@/actions/transcoding/index";
 
+//find the correct request for this NextRequest is not letting do to request.formData
 export async function POST(request: any) {
   try {
     const session = await getServerSession(authOptions);
@@ -12,7 +13,7 @@ export async function POST(request: any) {
       return NextResponse.json(
         {
           success: false,
-          message: "make sure your are signed up",
+          message: "Make sure your are signed up",
           status: 401,
         }, //401 is for unauthorization
       );
@@ -29,7 +30,7 @@ export async function POST(request: any) {
         {
           success: false,
           message: "select atleast one resolution",
-          status: 401,
+          status: 400,
         }, //401 is for unauthorization
       );
     }
@@ -37,7 +38,7 @@ export async function POST(request: any) {
       return NextResponse.json({
         success: false,
         message: "File size exceed max size",
-        status: 401,
+        status: 400,
       });
     }
     const option = "TRANS";

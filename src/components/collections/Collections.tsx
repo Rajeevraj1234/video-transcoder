@@ -8,13 +8,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-function Collections({
-  videoData,
-}: {
-  videoData: any; // TODO: add type here
-}) {
-  console.log(videoData);
 
+interface videoMetadataProp {
+  cratedAt: Date;
+  id: string;
+  url360?: string;
+  url480?: string;
+  url720?: string;
+  url1080?: string;
+  userId: string;
+  videoId: string;
+  videoType: string;
+}
+interface videoDataProp {
+  Transcoder_video_metatdata: videoMetadataProp[];
+  cratedAt: Date;
+  id: string;
+  originalName: string;
+  updatedName: string;
+  url: string;
+  userId: string;
+  videoType: string;
+}
+function Collections({ videoData }: { videoData: videoDataProp[] }) {
   return (
     <div className="mx-[300px] mt-[100px]">
       <div className="text-[2rem] font-bold tracking-tight mb-10">
