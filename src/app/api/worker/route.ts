@@ -15,16 +15,16 @@ export async function POST(request: NextRequest) {
         const baseUrl = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}`;
         switch (resolution) {
           case "360":
-            url360p = `${baseUrl}_360p.mp4`;
+            url360p = `${baseUrl}_360.mp4`;
             break;
           case "480":
-            url480p = `${baseUrl}_480p.mp4`;
+            url480p = `${baseUrl}_480.mp4`;
             break;
           case "720":
-            url720p = `${baseUrl}_720p.mp4`;
+            url720p = `${baseUrl}_720.mp4`;
             break;
           case "1080":
-            url1080p = `${baseUrl}_1080p.mp4`;
+            url1080p = `${baseUrl}_1080.mp4`;
             break;
         }
       });
