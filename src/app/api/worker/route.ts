@@ -6,16 +6,31 @@ import { NextResponse, NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const { fileKey, videoId, userId, resolutions } = await request.json();
-    if (fileKey) {
-      const outputKey360p = `${fileKey.split(".")[0]}_360p.mp4`;
-      const outputKey480p = `${fileKey.split(".")[0]}_480p.mp4`;
-      const outputKey720p = `${fileKey.split(".")[0]}_720p.mp4`;
-      const outputKey1080p = `${fileKey.split(".")[0]}_1080p.mp4`;
 
-      const url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey360p}`;
-      const url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey480p}`;
-      const url720p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey720p}`;
-      const url1080p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey720p}`;
+    let url360p = "",
+      url480p = "",
+      url720p = "",
+      url1080p = "";
+
+    if (fileKey) {
+      resolutions.foreach((resolution: string) => {
+        switch (resolution) {
+          case "360":
+            url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            break; // Exits the switch block
+          case "480":
+            url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            break;
+          case "720":
+            url720p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            break;
+          case "1080":
+            url1080p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            break;
+          default:
+          // Code to run if no case matches
+        }
+      });
 
       const db_res = await prisma.transcoded_video_metadata.create({
         data: {
