@@ -5,12 +5,12 @@ import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { data, success } = await request.json();
-    if (success) {
-      const outputKey360p = `${data.fileKey.split(".")[0]}_360p.mp4`;
-      const outputKey480p = `${data.fileKey.split(".")[0]}_480p.mp4`;
-      const outputKey720p = `${data.fileKey.split(".")[0]}_720p.mp4`;
-      const outputKey1080p = `${data.fileKey.split(".")[0]}_1080p.mp4`;
+    const { fileKey, videoId, userId, resolutions } = await request.json();
+    if (fileKey) {
+      const outputKey360p = `${fileKey.split(".")[0]}_360p.mp4`;
+      const outputKey480p = `${fileKey.split(".")[0]}_480p.mp4`;
+      const outputKey720p = `${fileKey.split(".")[0]}_720p.mp4`;
+      const outputKey1080p = `${fileKey.split(".")[0]}_1080p.mp4`;
 
       const url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey360p}`;
       const url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${outputKey480p}`;
@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
 
       const db_res = await prisma.transcoded_video_metadata.create({
         data: {
-          videoId: data.videoId,
-          userId: data.userId,
+          videoId: videoId,
+          userId: userId,
           url360: url360p,
           url480: url480p,
           url720: url720p,
-          url1080: url1080p ?? null, 
-          videoType:  data.option === "TRANS" ? "TRANSCODED" : "TRANSCODED_AND_SUBTITLED",
+          url1080: url1080p ?? null,
+          videoType: "TRANSCODED",
           createdAt: new Date(),
         },
       });
