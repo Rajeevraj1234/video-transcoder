@@ -66,60 +66,82 @@ const Collections: React.FC<CollectionsProps> = ({ videoData }) => {
                       </a>
                     </TableCell>
                   </TableRow>
-                  {video.Transcoded_video_metadata.length > 0 && (
-                    <TableRow className="">
-                      <TableCell className="font-medium w-[]">
-                        {video.originalName}
-                      </TableCell>
-                      <TableCell>
-                        {video.Transcoded_video_metadata[0].videoType}
-                      </TableCell>
-                      <TableCell className="text-primary font-medium underline">
-                        <a
-                          href={video.Transcoded_video_metadata[0].url360}
-                          target="_blank"
-                        >
-                          URL for 360p
-                        </a>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {video.Transcoded_video_metadata.length > 0 && (
-                    <TableRow>
-                      <TableCell className="font-medium w-[]">
-                        {video.originalName}
-                      </TableCell>
-                      <TableCell>
-                        {video.Transcoded_video_metadata[0].videoType}
-                      </TableCell>
-                      <TableCell className="text-primary font-medium underline">
-                        <a
-                          href={video.Transcoded_video_metadata[0].url480}
-                          target="_blank"
-                        >
-                          URL for 480p
-                        </a>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {video.Transcoded_video_metadata.length > 0 && (
-                    <TableRow>
-                      <TableCell className="font-medium w-[]">
-                        {video.originalName}
-                      </TableCell>
-                      <TableCell>
-                        {video.Transcoded_video_metadata[0].videoType}
-                      </TableCell>
-                      <TableCell className="text-primary font-medium underline">
-                        <a
-                          href={video.Transcoded_video_metadata[0].url720}
-                          target="_blank"
-                        >
-                          URL for 720p
-                        </a>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  {video.Transcoded_video_metadata.length > 0 &&
+                    video.Transcoded_video_metadata[0].url360 !== "" && (
+                      <TableRow className="">
+                        <TableCell className="font-medium w-[]">
+                          {video.originalName}
+                        </TableCell>
+                        <TableCell>
+                          {video.Transcoded_video_metadata[0].videoType}
+                        </TableCell>
+                        <TableCell className="text-primary font-medium underline">
+                          <a
+                            href={video.Transcoded_video_metadata[0].url360}
+                            target="_blank"
+                          >
+                            URL for 360p
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  {video.Transcoded_video_metadata.length > 0 &&
+                    video.Transcoded_video_metadata[0].ur480 !== "" && (
+                      <TableRow>
+                        <TableCell className="font-medium w-[]">
+                          {video.originalName}
+                        </TableCell>
+                        <TableCell>
+                          {video.Transcoded_video_metadata[0].videoType}
+                        </TableCell>
+                        <TableCell className="text-primary font-medium underline">
+                          <a
+                            href={video.Transcoded_video_metadata[0].url480}
+                            target="_blank"
+                          >
+                            URL for 480p
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  {video.Transcoded_video_metadata.length > 0 &&
+                    video.Transcoded_video_metadata[0].url720 !== "" && (
+                      <TableRow>
+                        <TableCell className="font-medium w-[]">
+                          {video.originalName}
+                        </TableCell>
+                        <TableCell>
+                          {video.Transcoded_video_metadata[0].videoType}
+                        </TableCell>
+                        <TableCell className="text-primary font-medium underline">
+                          <a
+                            href={video.Transcoded_video_metadata[0].url720}
+                            target="_blank"
+                          >
+                            URL for 720p
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  {video.Transcoded_video_metadata.length > 0 &&
+                    video.Transcoded_video_metadata[0].url1080 !== "" && (
+                      <TableRow>
+                        <TableCell className="font-medium w-[]">
+                          {video.originalName}
+                        </TableCell>
+                        <TableCell>
+                          {video.Transcoded_video_metadata[0].videoType}
+                        </TableCell>
+                        <TableCell className="text-primary font-medium underline">
+                          <a
+                            href={video.Transcoded_video_metadata[0].url1080}
+                            target="_blank"
+                          >
+                            URL for 1080p
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    )}
                 </TableBody>
               );
             })}
