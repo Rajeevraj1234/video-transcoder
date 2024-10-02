@@ -1,34 +1,31 @@
 "use server";
-
 import { prisma } from "@/lib/db/index";
 import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     const { fileKey, videoId, userId, resolutions } = await request.json();
-
     let url360p = "",
       url480p = "",
       url720p = "",
       url1080p = "";
 
-    if (fileKey) {
-      resolutions.foreach((resolution: string) => {
+    if (fileKey && resolutions && Array.isArray(resolutions)) {
+      resolutions.forEach((resolution: string) => {
+        const baseUrl = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}`;
         switch (resolution) {
           case "360":
-            url360p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
-            break; // Exits the switch block
+            url360p = `${baseUrl}_360p.mp4`;
+            break;
           case "480":
-            url480p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            url480p = `${baseUrl}_480p.mp4`;
             break;
           case "720":
-            url720p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            url720p = `${baseUrl}_720p.mp4`;
             break;
           case "1080":
-            url1080p = `https://${process.env.AWS_CLOUDFRONT_DOMAIN}/${fileKey.split(".")[0]}_${resolution}p.mp4}`;
+            url1080p = `${baseUrl}_1080p.mp4`;
             break;
-          default:
-          // Code to run if no case matches
         }
       });
 
@@ -39,14 +36,16 @@ export async function POST(request: NextRequest) {
           url360: url360p,
           url480: url480p,
           url720: url720p,
-          url1080: url1080p ?? null,
+          url1080: url1080p,
           videoType: "TRANSCODED",
           createdAt: new Date(),
         },
       });
-    }
 
-    return NextResponse.json({ status: 200 });
+      return NextResponse.json({ status: 200, data: db_res });
+    } else {
+      throw new Error("Invalid input data");
+    }
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: error }, { status: 500 });
